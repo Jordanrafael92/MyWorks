@@ -2,34 +2,59 @@ package br.com.myworks.model;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tarefas")
 public class Tarefa {
 	
-	private String descricao;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 	
+	@Column(name = "ds_tarefa", nullable = false, length = 150)
+	private String descricao;
+
+	@Enumerated(EnumType.STRING)
 	private TarefaStatus status;
 	
 	private LocalDate dataEntrega;
 	
 	private boolean visivel;
 	
-	private TarefaCategoria categoria;
+//	private TarefaCategoria categoria;
+//	
+//	private Usuario usuario;
 	
-	private Usuario usuario;
+//	public Usuario getUsuario() {
+//		return usuario;
+//	}
+//
+//	public void setUsuario(Usuario usuario) {
+//		this.usuario = usuario;
+//	}
+//
+//	public TarefaCategoria getCategoria() {
+//		return categoria;
+//	}
+//	
+//	public void setCategoria(TarefaCategoria categoria) {
+//		this.categoria = categoria;
+//	}
 	
-	public Usuario getUsuario() {
-		return usuario;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	public TarefaCategoria getCategoria() {
-		return categoria;
-	}
-	
-	public void setCategoria(TarefaCategoria categoria) {
-		this.categoria = categoria;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
 	public String getDescricao() {
