@@ -17,26 +17,26 @@ import br.com.tarefas.repository.TarefaCategoriaRepository;
 public class TarefaCategoriaController {
 
 	@Autowired
-	private TarefaCategoriaRepository repositorio;
+	private TarefaCategoriaRepository repository;
 	
 	@GetMapping("/categoria")
 	public List<TarefaCategoria> todasCategorias() {
-		return repositorio.findAll();
+		return repository.findAll();
 	}
 	
 	@GetMapping("/categoria/{id}")
 	public TarefaCategoria umaCategoria(@PathVariable Integer id) {
-		return repositorio.findById(id).orElse(null);
+		return repository.findById(id).orElse(null);
 	}
 	
 	@PostMapping("/categoria")
 	public TarefaCategoria salvarCategoria(@RequestBody TarefaCategoria categoria) {
-		return repositorio.save(categoria);
+		return repository.save(categoria);
 	}
 	
 	@DeleteMapping("/categoria/{id}")
 	public void excluirTarefa(@PathVariable Integer id) {
-		repositorio.deleteById(id);
+		repository.deleteById(id);
 	}
 	
 }

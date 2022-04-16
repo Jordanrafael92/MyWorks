@@ -3,6 +3,8 @@ package br.com.tarefas.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,30 +21,30 @@ import br.com.tarefas.repository.TarefaRepository;
 public class TarefaController {
 
 	@Autowired
-	private TarefaRepository repositorio;
+	private TarefaRepository repository;
 	
 	@GetMapping("/tarefa")
 	public List<Tarefa> todasTarefas(@RequestParam Map<String, String> parametros) {
 		if (parametros.isEmpty())
-			return repositorio.findAll();
+			return repository.findAll();
 		
 		String descricao = parametros.get("descricao");
-		return repositorio.findByDescricaoLike("%" + descricao + "%" );
+		return repository.findByDescricaoLike("%" + descricao + "%" );
 	}
 	
 	@GetMapping("/tarefa/{id}")
 	public Tarefa umaTarefa(@PathVariable Integer id) {
-		return repositorio.findById(id).orElse(null);
+		return repository.findById(id).orElse(null);
 	}
 	
 	@PostMapping("/tarefa")
-	public Tarefa salvarTarefa(@RequestBody Tarefa tarefa) {
-		return repositorio.save(tarefa);
+	public Tarefa salvarTarefa(@Valid @RequestBody Tarefa tarefa) {
+		return repository.save(tarefa);
 	}
 	
 	@DeleteMapping("/tarefa/{id}")
 	public void excluirTarefa(@PathVariable Integer id) {
-		repositorio.deleteById(id);
+		repository.deleteById(id);
 	}
 	
 }
