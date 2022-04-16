@@ -15,36 +15,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.tarefas.model.Tarefa;
-import br.com.tarefas.repository.TarefaRepository;
+import br.com.tarefas.services.TarefaService;
 
 @RestController
 public class TarefaController {
 
 	@Autowired
-	private TarefaRepository repository;
+	private TarefaService service;
 	
 	@GetMapping("/tarefa")
 	public List<Tarefa> todasTarefas(@RequestParam Map<String, String> parametros) {
 		if (parametros.isEmpty())
-			return repository.findAll();
+			return service.getTodasTarefas();
 		
 		String descricao = parametros.get("descricao");
-		return repository.findByDescricaoLike("%" + descricao + "%" );
+		return service.getTarefasPorDescricao(descricao);
 	}
 	
 	@GetMapping("/tarefa/{id}")
 	public Tarefa umaTarefa(@PathVariable Integer id) {
-		return repository.findById(id).orElse(null);
+		return service.getTarefaPorId(id);
 	}
 	
 	@PostMapping("/tarefa")
 	public Tarefa salvarTarefa(@Valid @RequestBody Tarefa tarefa) {
-		return repository.save(tarefa);
+		return service.salvarTarefa(tarefa);
 	}
 	
 	@DeleteMapping("/tarefa/{id}")
 	public void excluirTarefa(@PathVariable Integer id) {
-		repository.deleteById(id);
+		service.deleteById(id);
 	}
 	
 }
