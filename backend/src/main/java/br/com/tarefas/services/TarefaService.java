@@ -48,4 +48,15 @@ public class TarefaService {
 		repository.save(tarefa);
 		return tarefa;
 	}
+	
+	public Tarefa concluirTarefaPorId(Integer id) {
+		Tarefa tarefa = getTarefaPorId(id);
+		
+		if (TarefaStatus.CANCELADA.equals(tarefa.getStatus()))
+			throw new TarefaStatusExeption();
+		
+		tarefa.setStatus(TarefaStatus.CONCLUIDA);
+		repository.save(tarefa);
+		return tarefa;
+	}
 }
