@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.tarefas.controller.assembler.TarefaModelAssembler;
 import br.com.tarefas.controller.request.TarefaRequest;
 import br.com.tarefas.controller.response.TarefaResponse;
 import br.com.tarefas.model.Tarefa;
@@ -36,8 +38,11 @@ public class TarefaController {
 	@Autowired
 	private ModelMapper mapper;
 	
+	@Autowired
+	private TarefaModelAssembler assembler;
+	
 	@GetMapping
-	public List<TarefaResponse> todasTarefas(@RequestParam Map<String, String> parametros) {
+	public CollectionModel<EntityModel<TarefaResponse>> todasTarefas(@RequestParam Map<String, String> parametros) {
 		List<Tarefa> tarefas = new ArrayList<>();
 		
 		if (parametros.isEmpty()) {
@@ -47,26 +52,21 @@ public class TarefaController {
 			tarefas = service.getTarefasPorDescricao(descricao);
 		}
 		
-		List<TarefaResponse> tarefasResp = tarefas
+		List<EntityModel<TarefaResponse>> tarefasModel = tarefas
 				.stream()
-				.map(tarefa -> mapper.map(tarefa, TarefaResponse.class))
+				.map(assembler::toModel)
 				.collect(Collectors.toList());			
-		return tarefasResp;
+		return CollectionModel.of(tarefasModel,WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder.methodOn(TarefaController.class).todasTarefas(new HashMap<>()))
+				.withSelfRel()
+				);
 		
 	}
 	
 	@GetMapping("/{id}")
 	public EntityModel<TarefaResponse> umaTarefa(@PathVariable Integer id) {
 		Tarefa tarefa = service.getTarefaPorId(id);
-		TarefaResponse tarefaResp = mapper.map(tarefa, TarefaResponse.class);
-		
-		EntityModel<TarefaResponse> tarefaModel = EntityModel.of(tarefaResp,
-			WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TarefaController.class).umaTarefa(id)).withSelfRel(),
-			WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TarefaController.class).todasTarefas(new HashMap<>())).withRel("tarefas"),
-			WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TarefaCategoriaController.class).umaCategoria(tarefaResp.getCategoriaId())).withRel("categoria"),
-			WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class).umUsuario(tarefaResp.getUsuarioId())).withRel("usuario"));
-		
-		return tarefaModel;
+		return assembler.toModel(tarefa);
 	}
 	
 	@PostMapping
