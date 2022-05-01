@@ -1,5 +1,8 @@
 package br.com.tarefas.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,8 +58,8 @@ public class TarefaController {
 				.stream()
 				.map(assembler::toModel)
 				.collect(Collectors.toList());			
-		return CollectionModel.of(tarefasModel,WebMvcLinkBuilder.linkTo(
-				WebMvcLinkBuilder.methodOn(TarefaController.class).todasTarefas(new HashMap<>()))
+		return CollectionModel.of(tarefasModel, linkTo(
+				methodOn(TarefaController.class).todasTarefas(new HashMap<>()))
 				.withSelfRel()
 				);
 		
