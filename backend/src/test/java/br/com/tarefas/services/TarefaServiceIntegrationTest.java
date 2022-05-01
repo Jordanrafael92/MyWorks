@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import br.com.tarefas.exception.TarefaStatusExeption;
+import br.com.tarefas.exception.TarefaStatusException;
 import br.com.tarefas.model.Tarefa;
 import br.com.tarefas.model.TarefaStatus;
 
@@ -28,7 +28,7 @@ public class TarefaServiceIntegrationTest {
 		service.salvarTarefa(tarefa);
 		
 		tarefa = service.iniciarTarefaPorId(3);
-		Assertions.assertThrows(TarefaStatusExeption.class, 
+		Assertions.assertThrows(TarefaStatusException.class, 
 				() -> service.iniciarTarefaPorId(3));
 	}
 }

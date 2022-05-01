@@ -7,7 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.tarefas.exception.TarefaStatusExeption;
+import br.com.tarefas.exception.TarefaStatusException;
 import br.com.tarefas.model.Tarefa;
 import br.com.tarefas.model.TarefaStatus;
 import br.com.tarefas.repository.TarefaRepository;
@@ -42,7 +42,7 @@ public class TarefaService {
 		Tarefa tarefa = getTarefaPorId(id);
 		
 		if (!TarefaStatus.ABERTO.equals(tarefa.getStatus()))
-			throw new TarefaStatusExeption();
+			throw new TarefaStatusException();
 		
 		tarefa.setStatus(TarefaStatus.EM_ANDAMENTO);
 		repository.save(tarefa);
@@ -53,10 +53,20 @@ public class TarefaService {
 		Tarefa tarefa = getTarefaPorId(id);
 		
 		if (TarefaStatus.CANCELADA.equals(tarefa.getStatus()))
-			throw new TarefaStatusExeption();
+			throw new TarefaStatusException();
 		
 		tarefa.setStatus(TarefaStatus.CONCLUIDA);
 		repository.save(tarefa);
 		return tarefa;
+	}
+	
+	public Tarefa cancelarTarefaPorId(Integer id) {
+		Tarefa tarefa = getTarefaPorId(id);
+		
+		if (TarefaStatus.CONCLUIDA.equals(tarefa.getStatus())) 
+			throw new TarefaStatusException("Não é possível cancelar uma tarefa concluída");
+		
+		tarefa.setStatus(TarefaStatus.CANCELADA);
+		return salvarTarefa(tarefa);
 	}
 }

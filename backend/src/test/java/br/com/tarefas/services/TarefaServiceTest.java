@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.tarefas.exception.TarefaStatusExeption;
+import br.com.tarefas.exception.TarefaStatusException;
 import br.com.tarefas.model.Tarefa;
 import br.com.tarefas.model.TarefaStatus;
 import br.com.tarefas.repository.TarefaRepository;
@@ -35,7 +35,7 @@ public class TarefaServiceTest {
 		
 		Mockito.when(repositorio.findById(idExemplo)).thenReturn(Optional.of(tarefa));
 		
-		Assertions.assertThrows(TarefaStatusExeption.class, 
+		Assertions.assertThrows(TarefaStatusException.class, 
 				() -> service.concluirTarefaPorId(idExemplo));
 	}
 }
