@@ -13,7 +13,7 @@ import br.com.tarefas.repository.UsuarioRepository;
 import br.com.tarefas.security.UserDetailsImpl;
 
 @Service
-public class UserDetailServiceImple implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
