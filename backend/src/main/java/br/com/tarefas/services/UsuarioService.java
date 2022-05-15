@@ -7,13 +7,20 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.tarefas.controller.response.JwtResponse;
 import br.com.tarefas.model.Role;
 import br.com.tarefas.model.Usuario;
 import br.com.tarefas.repository.RoleRepository;
 import br.com.tarefas.repository.UsuarioRepository;
+import br.com.tarefas.security.JwtUtils;
+import br.com.tarefas.security.UserDetailsImpl;
 
 @Service
 public class UsuarioService {
@@ -26,6 +33,12 @@ public class UsuarioService {
 
 	@Autowired
 	private PasswordEncoder encoder;
+
+	@Autowired
+	AuthenticationManager authenticationManager;
+
+	@Autowired
+	JwtUtils jwtUtils;
 
 	public Usuario getUsuarioPorId(Integer id) {
 		return usuarioRepositorio.findById(id).orElseThrow(() -> new EntityNotFoundException());
@@ -58,6 +71,26 @@ public class UsuarioService {
 
 		usuario.setId(id);
 		return salvar(usuario);
+	}
+
+	public JwtResponse autenticaUsuario(String nome, String senha) {
+		Authentication authentication = authenticationManager.authenticate( 
+				new UsernamePasswordAuthenticationToken(nome, senha));
+		
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = jwtUtils.generateJwtToken(authentication);
+		
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(item -> item.getAuthority())
+				.collect(Collectors.toList());
+		
+		return new JwtResponse(
+				jwt, userDetails.getId(),
+				userDetails.getUsername(), 
+				roles);
+				
 	}
 
 }
