@@ -8,7 +8,7 @@
     <v-text-field v-model="user.senha" label="Senha" prepend-icon="mdi-lock" type="password"/>
 
     <v-card-actions class="d-flex justify-center">
-      <v-btn color="success" @click="login()" >Acessar</v-btn>
+      <v-btn color="success" @click="login(user)" >Acessar</v-btn>
     </v-card-actions>
   </v-card>
 </template>

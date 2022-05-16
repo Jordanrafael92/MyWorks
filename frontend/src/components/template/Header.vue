@@ -21,11 +21,24 @@
         </v-list-item>
       </v-list>
     </v-menu>
+
+    <v-btn text @click="logout" v-if="usuario" >Sair</v-btn>
   </v-app-bar>
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    usuario() {
+      return this.$store.getters.usuario
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('logout')
+    }
+  }
+};
 </script>
 
 <style>

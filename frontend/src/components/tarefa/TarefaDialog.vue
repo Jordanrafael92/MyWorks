@@ -25,7 +25,7 @@
         <v-container>
           <v-row>
             <v-col cols="12" sm="12" md="12">
-              <v-text-field label="Descricao" required></v-text-field>
+              <v-text-field label="Descricao" required v-model="tarefa.descricao"></v-text-field>
             </v-col>
 
             <v-col cols="12">
@@ -41,8 +41,8 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     v-model="dateFormatted"
-                    label="Data de entrega"
-                    hint="DD/MM/YYYY format"
+                    label="Date"
+                    hint="MM/DD/YYYY format"
                     persistent-hint
                     prepend-icon="mdi-calendar"
                     v-bind="attrs"
@@ -56,12 +56,16 @@
                   @input="menu1 = false"
                 ></v-date-picker>
               </v-menu>
+
             </v-col>
 
             <v-col cols="12" sm="12" md="6">
               <v-select
-                :items="['Pessoal', 'Profissional']"
+                :items="categorias"
                 label="Categoria"
+                item-text="nome"
+                item-value="id"
+                v-model="categoriaId"
                 required
               ></v-select>
             </v-col>
@@ -73,7 +77,7 @@
         <v-btn color="blue darken-1" text @click="dialog = false">
           Cancelar
         </v-btn>
-        <v-btn color="blue darken-1" text @click="dialog = false">
+        <v-btn color="blue darken-1" text @click="salvar">
           Salvar
         </v-btn>
       </v-card-actions>
@@ -87,25 +91,65 @@ export default {
     return {
       date: new Date().toISOString().substr(0, 10),
       dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
-      dialog: false,
       menu1: false,
-      menu2: false,
+      tarefa: {},
+      categoriaId: null
     };
   },
+  computed: {
+    categorias() {
+      return this.$store.getters.categorias
+    },
+    dialog: {
+      get: function() {
+        return this.$store.getters.showDialog
+      },
+      set: function(value) {
+        this.$store.dispatch('atualizaDialog', value)
+      }
+    }
+  },
+  watch: {
+    date (val) {
+      this.dateFormatted = this.formatDate(val)
+    },
+    dialog() {
+      if (this.dialog) {
+        this.$store.dispatch('carregarCategorias')
+        this.tarefa = this.$store.getters.tarefaEdicao
+        this.date = this.tarefa.dataEntrega
+        this.categoriaId = this.tarefa.categoriaId
+
+      } else {
+        this.date = null
+        this.$store.dispatch('limparForm')
+      }
+    }
+  },
   methods: {
+    novaTarefa() {
+      this.$store.dispatch('novaTarefa')
+    },
+    salvar() {
+      this.tarefa.dataEntrega = this.date
+      this.tarefa.categoriaId = this.categoriaId
+
+      this.$store.dispatch('salvarTarefa', this.tarefa)
+
+      this.dialog = false
+    },
     formatDate(date) {
       if (!date) return null;
 
       const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
+      return `${day}/${month}/${year}`;
     },
     parseDate(date) {
       if (!date) return null;
-
-      const [month, day, year] = date.split("/");
+      const [day, month, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
-  },
+  }
 };
 </script>
 

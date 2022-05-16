@@ -22,10 +22,22 @@ export default {
   components: {
     Coluna, TarefaDialog
   },
+  data() {
+    return {
+      tarefas: [],
+    }
+  },
+  methods: {
+    tarefasPorStatus(status) {
+      return this.tarefas.filter(
+        tarefa => { return tarefa.status == status }
+      )
+    },
+  },
   computed: {
     tarefasAbertas() {
       // https://vuex.vuejs.org/guide/getters.html#method-style-access
-      return this.$store.getters.tarefasPorStatus('ABERTA')      
+      return this.$store.getters.tarefasPorStatus('ABERTO')      
     },
     tarefasEmAndamento() {
       return this.$store.getters.tarefasPorStatus('EM_ANDAMENTO')      
@@ -37,6 +49,9 @@ export default {
       return this.$store.getters.tarefasPorStatus('CANCELADA')      
     },
   },
+  mounted () {
+    this.$store.dispatch('carregarTarefas')
+  }
 };
 </script>
 

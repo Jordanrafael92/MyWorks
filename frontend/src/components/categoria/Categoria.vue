@@ -20,10 +20,10 @@
 
     <v-col cols="12">
       <v-card elevation="2">
-        <v-card-title> Categoria</v-card-title>
+        <v-card-title> Categoria {{ categoria.id ? categoria.id : '' }} </v-card-title>
 
         <v-card-text>
-          <v-text-field label="Nome" />
+          <v-text-field label="Nome" v-model="categoria.nome" />
         </v-card-text>
 
         <v-card-actions>
@@ -40,26 +40,39 @@ export default {
   data() {
     return {
       headers: [
+        { text: "ID", align: "start", sortable: true, value: "id" },
         { text: "Nome", align: "start", sortable: true, value: "nome" },
         { text: "Actions", value: "actions", sortable: false, width: "10%" },
       ],
-      categorias: [{ nome: "Pessoal" }, { nome: "Profissional" }],
+      categoria: {}
     };
+  },
+  computed: {
+    categorias() {
+      return this.$store.getters.categorias
+    }
   },
   methods: {
     novo() {
-      console.log("novo");
+      this.categoria = {}
     },
     salvar() {
-      console.log("salvar");
+      this.$store.dispatch('salvarCategoria', this.categoria)
+      this.novo()
     },
     editar(categoria) {
-      console.log("editar", categoria);
+      this.categoria = {
+        ...categoria
+        }
     },
     excluir(categoria) {
-      console.log("excluir", categoria);
+      this.$store.dispatch('excluirCategoria', categoria)  
+      this.novo()
     },
   },
+  mounted() {
+    this.$store.dispatch('carregarCategorias')
+  }
 };
 </script>
 

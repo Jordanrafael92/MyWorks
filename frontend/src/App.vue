@@ -26,5 +26,10 @@ export default {
   data: () => ({
     //
   }),
+
+  created() {
+    this.$store.dispatch('carregarUsuario')
+      
+  }
 };
 </script>
