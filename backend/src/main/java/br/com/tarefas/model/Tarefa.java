@@ -37,7 +37,7 @@ public class Tarefa {
 	@FutureOrPresent(message = "{tarefa.descricao.future-or-present}")
 	private LocalDate dataEntrega;
 	
-	private boolean visivel;
+	private boolean visivel = true;
 	
 	@ManyToOne
 	@JoinColumn(nullable = false)

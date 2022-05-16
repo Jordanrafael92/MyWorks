@@ -17,12 +17,13 @@ public class AuthController {
 
 	@Autowired
 	private UsuarioService usuarioService;
-	
+
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-		JwtResponse jwtResponse = usuarioService.autenticaUsuario(loginRequest.getNome(),
+		JwtResponse jwtResponse = usuarioService.autenticaUsuario(loginRequest.getNome(), 
 				loginRequest.getSenha());
 		
 		return ResponseEntity.ok(jwtResponse);
 	}
+	
 }

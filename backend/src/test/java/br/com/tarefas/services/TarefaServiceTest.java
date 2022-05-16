@@ -17,7 +17,7 @@ import br.com.tarefas.repository.TarefaRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class TarefaServiceTest {
-	
+
 	@Mock
 	private TarefaRepository repositorio;
 	
@@ -26,6 +26,7 @@ public class TarefaServiceTest {
 	
 	@Test
 	void naoDeveConcluirTarefaCancelada() {
+		
 		Integer idExemplo = 1;
 		
 		Tarefa tarefa = new Tarefa();
@@ -37,5 +38,7 @@ public class TarefaServiceTest {
 		
 		Assertions.assertThrows(TarefaStatusException.class, 
 				() -> service.concluirTarefaPorId(idExemplo));
+		
 	}
+	
 }

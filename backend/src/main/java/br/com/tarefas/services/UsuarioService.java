@@ -27,7 +27,7 @@ public class UsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepositorio;
-
+	
 	@Autowired
 	private RoleRepository roleRepositorio;
 
@@ -36,7 +36,7 @@ public class UsuarioService {
 
 	@Autowired
 	AuthenticationManager authenticationManager;
-
+	
 	@Autowired
 	JwtUtils jwtUtils;
 
@@ -48,10 +48,6 @@ public class UsuarioService {
 		return usuarioRepositorio.findAll();
 	}
 
-	public void deleteById(Integer id) {
-		usuarioRepositorio.deleteById(id);
-	}
-
 	public Usuario salvar(Usuario usuario) {
 		Set<Role> roles = getRoles(usuario);
 		usuario.setRoles(roles);
@@ -59,38 +55,47 @@ public class UsuarioService {
 		return usuarioRepositorio.save(usuario);
 	}
 
-	private Set<Role> getRoles(Usuario usuario) {
-		Set<Role> rolesBanco = usuario.getRoles().stream().map(role -> roleRepositorio.findByName(role.getName()))
-				.collect(Collectors.toSet());
-		return rolesBanco;
-	}
-
 	public Usuario atualizar(Integer id, Usuario usuario) {
 		if (!usuarioRepositorio.existsById(id))
 			throw new EntityNotFoundException();
 
 		usuario.setId(id);
+		
 		return salvar(usuario);
 	}
 
+	public void deleteById(Integer id) {
+		usuarioRepositorio.deleteById(id);
+	}
+
+	private Set<Role> getRoles(Usuario usuario) {
+		Set<Role> rolesBanco = usuario.getRoles()
+				.stream()
+				.map(role -> roleRepositorio.findByName(role.getName()))
+				.collect(Collectors.toSet());
+		
+		return rolesBanco;
+	}
+
 	public JwtResponse autenticaUsuario(String nome, String senha) {
-		Authentication authentication = authenticationManager.authenticate( 
+		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(nome, senha));
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		UserDetailsImpl userDetails = (UserDetailsImpl) 
+				authentication.getPrincipal();
 		
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 		
 		return new JwtResponse(
-				jwt, userDetails.getId(),
+				jwt, 
+				userDetails.getId(), 
 				userDetails.getUsername(), 
 				roles);
-				
 	}
-
+	
 }

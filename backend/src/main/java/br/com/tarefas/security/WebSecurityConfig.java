@@ -25,13 +25,13 @@ import br.com.tarefas.services.UserDetailsServiceImpl;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
-
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	
 	private static final String[] PATHS = new String[] {"/tarefa/**", "/categoria/**", "/usuario/**"};
 	
 	@Autowired
-	private UserDetailsServiceImpl userDetailService;
-	
+	private UserDetailsServiceImpl userDetailsService;
+
 	@Autowired
 	private AuthEntryPointJWT unauthorizedHandler;
 	
@@ -39,9 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
-	public AuthTokenFilter autenticationJwtTokenFilter() {
+	public AuthTokenFilter authenticationJwtTokenFilter() {
 		return new AuthTokenFilter();
 	}
 	
@@ -51,35 +51,41 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		return super.authenticationManagerBean();
 	}
 	
-	//Autenticação
+	/**
+	 * AUTENTICAÇÃO
+	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailService)
-		.passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService)
+			.passwordEncoder(passwordEncoder());
 	}
 	
-	//Autorização
+	/**
+	 * AUTORIZAÇÃO
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().cors()
-		.and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and()
-			.authorizeRequests()
-			.antMatchers("/api/auth/**").permitAll()
-			.antMatchers(HttpMethod.POST, PATHS)
-				.hasRole("ADMIN")
-			.antMatchers(HttpMethod.PUT, PATHS)
-				.hasRole("ADMIN")
-			.antMatchers(HttpMethod.DELETE, PATHS)
-				.hasRole("ADMIN")
-			.antMatchers(HttpMethod.GET, PATHS)
-				.hasAnyRole("ADMIN", "USER")
-			.antMatchers("/h2-console/**").permitAll()
-			.anyRequest().authenticated()
-		.and()
-			.addFilterBefore(autenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler);		
+			.and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+				.authorizeRequests()
+				.antMatchers("/api/auth/**").permitAll()
+				.antMatchers(HttpMethod.POST, PATHS)
+					.hasRole("ADMIN")
+				.antMatchers(HttpMethod.PUT, PATHS)
+					.hasRole("ADMIN")
+				.antMatchers(HttpMethod.DELETE, PATHS)
+					.hasRole("ADMIN")
+				.antMatchers(HttpMethod.GET, PATHS)
+					.hasAnyRole("ADMIN", "USER")
+				.antMatchers("/h2-console/**").permitAll()
+				.anyRequest().authenticated()
+			.and()
+				.addFilterBefore(authenticationJwtTokenFilter(), 
+						UsernamePasswordAuthenticationFilter.class)
+			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler);
+				
 	}
 	
 	@Bean
@@ -87,10 +93,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081"));
         configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 	
+	
+	
+	
+	
+	
+
 }

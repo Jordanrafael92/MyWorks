@@ -38,56 +38,64 @@ public class UsuarioController {
 
 	@Autowired
 	private UsuarioService usuarioService;
-
+	
 	@Autowired
 	private UsuarioModelAssembler assembler;
 
 	@Autowired
 	private ModelMapper mapper;
-
+	
+	
 	@GetMapping("/{id}")
 	public EntityModel<UsuarioResponse> umUsuario(@PathVariable Integer id) {
 		Usuario usuario = usuarioService.getUsuarioPorId(id);
 		EntityModel<UsuarioResponse> usuarioResponse = assembler.toModel(usuario);
 		return usuarioResponse;
 	}
-
+	
 	@GetMapping
 	public CollectionModel<EntityModel<UsuarioResponse>> todosUsuarios() {
 		List<Usuario> usuarios = usuarioService.getTodosUsuarios();
-
-		List<EntityModel<UsuarioResponse>> usuariosModel = usuarios.stream().map(assembler::toModel)
+		
+		List<EntityModel<UsuarioResponse>> usuariosModel = usuarios
+				.stream()
+				.map(assembler::toModel)
 				.collect(Collectors.toList());
-
+		
 		return CollectionModel.of(usuariosModel,
-				linkTo(methodOn(TarefaController.class).todasTarefas(new HashMap<>())).withSelfRel());
+				linkTo(
+						methodOn(TarefaController.class).todasTarefas(new HashMap<>()))
+				.withSelfRel());
 	}
-
+	
 	@PostMapping
-	public ResponseEntity<EntityModel<UsuarioResponse>> salvarUsuario(@Valid @RequestBody UsuarioRequest usuarioReq) {
-
+	public ResponseEntity<EntityModel<UsuarioResponse>> salvarUsuario(
+			@Valid @RequestBody UsuarioRequest usuarioReq) {
+		
 		Usuario usuario = mapper.map(usuarioReq, Usuario.class);
 		Usuario usuarioSalvo = usuarioService.salvar(usuario);
 		EntityModel<UsuarioResponse> usuarioModel = assembler.toModel(usuarioSalvo);
 
-		return ResponseEntity.created(usuarioModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(usuarioModel);
+		return ResponseEntity
+			.created(usuarioModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+			.body(usuarioModel);
 	}
-
+	
 	@PutMapping("/{id}")
-	public ResponseEntity<EntityModel<UsuarioResponse>> atualizarUsuario(@PathVariable Integer id,
-			@Valid @RequestBody UsuarioRequest usuarioReq) {
-
+	public ResponseEntity<EntityModel<UsuarioResponse>> atualizarUsuario(
+			@PathVariable Integer id, @Valid @RequestBody UsuarioRequest usuarioReq) {
+		
 		Usuario usuario = mapper.map(usuarioReq, Usuario.class);
 		Usuario usuarioSalvo = usuarioService.atualizar(id, usuario);
 		EntityModel<UsuarioResponse> usuarioModel = assembler.toModel(usuarioSalvo);
-
+		
 		return ResponseEntity.ok().body(usuarioModel);
 	}
-
+	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void excluirUsuario(@PathVariable Integer id) {
 		usuarioService.deleteById(id);
 	}
-
+	
 }

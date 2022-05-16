@@ -58,14 +58,14 @@ public class TarefaController {
 		}
 		
 		List<EntityModel<TarefaResponse>> tarefasModel = tarefas
-				.stream()
-				.map(assembler::toModel)
-				.collect(Collectors.toList());			
-		return CollectionModel.of(tarefasModel, linkTo(
-				methodOn(TarefaController.class).todasTarefas(new HashMap<>()))
+			.stream()
+			.map(assembler::toModel)
+			.collect(Collectors.toList());
+		
+		return CollectionModel.of(tarefasModel,
+				linkTo(methodOn(TarefaController.class).todasTarefas(new HashMap<>()))
 				.withSelfRel()
 				);
-		
 	}
 	
 	@GetMapping("/{id}")
@@ -92,7 +92,7 @@ public class TarefaController {
 	}
 	
 	@PutMapping("/{id}/iniciar")
-	public EntityModel<TarefaResponse> inicialTarefa(@PathVariable Integer id) {
+	public EntityModel<TarefaResponse> iniciarTarefa(@PathVariable Integer id) {
 		Tarefa tarefa = service.iniciarTarefaPorId(id);
 		return assembler.toModel(tarefa);
 	}

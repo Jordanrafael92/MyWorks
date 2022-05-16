@@ -16,9 +16,9 @@ public class UsuarioRequest {
 	@NotBlank(message = "Campo senha do usuário não pode estar vazio")
 	@Column(nullable = false)
 	private String senha;
-
-	private Set<RoleRequest> roles;
 	
+	private Set<RoleRequest> roles;
+
 	public Integer getId() {
 		return id;
 	}

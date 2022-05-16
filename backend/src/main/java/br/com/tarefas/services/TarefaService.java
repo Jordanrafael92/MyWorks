@@ -16,50 +16,51 @@ import br.com.tarefas.repository.TarefaRepository;
 public class TarefaService {
 
 	@Autowired
-	private TarefaRepository repository;
+	private TarefaRepository repositorio;
 	
-	public List<Tarefa> getTodasTarefas(){
-		return repository.findAll();
+	public List<Tarefa> getTodasTarefas() {
+		return repositorio.findAll();
 	}
-	
-	public List<Tarefa> getTarefasPorDescricao(String descricao){
-		return repository.findByDescricaoLike("%" + descricao + "%");
+
+	public List<Tarefa> getTarefasPorDescricao(String descricao) {
+		return repositorio.findByDescricaoLike("%" + descricao + "%");
 	}
 	
 	public Tarefa getTarefaPorId(Integer id) {
-		return repository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+		return repositorio.findById(id).orElseThrow(() -> new EntityNotFoundException());
 	}
 	
 	public Tarefa salvarTarefa(Tarefa tarefa) {
-		return repository.save(tarefa);
+		return repositorio.save(tarefa);
 	}
 	
 	public void deleteById(Integer id) {
-		repository.deleteById(id);
+		repositorio.deleteById(id);
 	}
 	
 	public Tarefa iniciarTarefaPorId(Integer id) {
 		Tarefa tarefa = getTarefaPorId(id);
 		
 		if (!TarefaStatus.ABERTO.equals(tarefa.getStatus()))
-			throw new TarefaStatusException();
+			throw new TarefaStatusException("Não é possível iniciar a tarefa com status " 
+					+ tarefa.getStatus().name() );
 		
 		tarefa.setStatus(TarefaStatus.EM_ANDAMENTO);
-		repository.save(tarefa);
-		return tarefa;
+		
+		return salvarTarefa(tarefa);
 	}
 	
 	public Tarefa concluirTarefaPorId(Integer id) {
 		Tarefa tarefa = getTarefaPorId(id);
 		
 		if (TarefaStatus.CANCELADA.equals(tarefa.getStatus()))
-			throw new TarefaStatusException();
+			throw new TarefaStatusException("Não é possível concluir uma tarefa cancelada");
 		
 		tarefa.setStatus(TarefaStatus.CONCLUIDA);
-		repository.save(tarefa);
-		return tarefa;
+		
+		return salvarTarefa(tarefa);
 	}
-	
+
 	public Tarefa cancelarTarefaPorId(Integer id) {
 		Tarefa tarefa = getTarefaPorId(id);
 		
@@ -69,4 +70,14 @@ public class TarefaService {
 		tarefa.setStatus(TarefaStatus.CANCELADA);
 		return salvarTarefa(tarefa);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

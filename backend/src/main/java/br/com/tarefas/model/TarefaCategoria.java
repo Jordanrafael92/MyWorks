@@ -17,8 +17,8 @@ public class TarefaCategoria {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@NotBlank(message = "{tarefa.descricao.not-blank}")
-	@Size(max = 50, message = "Campo nome deve ter no máximo 50 caracteres.")
+	@NotBlank(message = "Campo nome não pode estar vazio")
+	@Size(max = 50, message = "Campo nome deve ter no máximo 50 letras")
 	@Column(length = 50)
 	private String nome;
 

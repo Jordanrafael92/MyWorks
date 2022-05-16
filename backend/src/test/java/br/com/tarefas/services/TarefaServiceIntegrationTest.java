@@ -11,24 +11,24 @@ import br.com.tarefas.model.TarefaStatus;
 
 @SpringBootTest
 public class TarefaServiceIntegrationTest {
-	
+
 	@Autowired
 	private TarefaService service;
 	
 	@Test
 	void deveIniciarTarefa() {
-		Tarefa tarefa = service.iniciarTarefaPorId(3);
+		Tarefa tarefa = service.iniciarTarefaPorId(5);
 		Assertions.assertEquals(TarefaStatus.EM_ANDAMENTO, tarefa.getStatus());
 	}
 	
 	@Test
 	void naoDeveIniciarTarefaConcluida() {
-		Tarefa tarefa = service.getTarefaPorId(3);
+		Tarefa tarefa = service.getTarefaPorId(5);
 		tarefa.setStatus(TarefaStatus.CONCLUIDA);
 		service.salvarTarefa(tarefa);
 		
-		tarefa = service.iniciarTarefaPorId(3);
 		Assertions.assertThrows(TarefaStatusException.class, 
-				() -> service.iniciarTarefaPorId(3));
+				() -> service.iniciarTarefaPorId(5));
 	}
+	
 }

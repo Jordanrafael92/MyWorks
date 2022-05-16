@@ -36,20 +36,24 @@ public class CarregaBaseDeDados {
 	
 	@Autowired
 	private TarefaRepository tarefaRepository;
-
+	
 	@Autowired
 	private PasswordEncoder encoder;
-	
+
 	@Bean
 	CommandLineRunner executar() {
 		return args -> {
+			
 			Role roleAdmin = new Role(ERole.ROLE_ADMIN);
 			roleAdmin = roleRepository.save(roleAdmin);
+			
+			Role roleUser = new Role(ERole.ROLE_USER);
+			roleUser = roleRepository.save(roleUser);
 			
 			Usuario usuario = new Usuario();
 			usuario.setNome("Admin");
 			usuario.setSenha(encoder.encode("123456"));
-			usuario.setRoles(Set.of(roleAdmin));
+			usuario.setRoles(Set.of(roleAdmin, roleUser));
 			
 			usuarioRepository.save(usuario);
 			
@@ -67,7 +71,6 @@ public class CarregaBaseDeDados {
 			tarefa.setUsuario(usuario);
 			
 			tarefaRepository.save(tarefa);
-			
 			Tarefa tarefa2 = new Tarefa();
 			tarefa2.setDescricao("Aprender Spring Data JPA");
 			tarefa2.setDataEntrega(LocalDate.now().plusDays(1));

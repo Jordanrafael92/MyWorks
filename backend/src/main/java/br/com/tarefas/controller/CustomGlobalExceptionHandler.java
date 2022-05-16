@@ -27,7 +27,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 	@ExceptionHandler(EntityNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ErroResponse entityNotFoundHandler(EntityNotFoundException ex) {
-		return new ErroResponse("Recurso não encontrado!");
+		return new ErroResponse("Recurso não encontrado");
 	}
 	
 	@ExceptionHandler(TarefaStatusException.class)
@@ -40,21 +40,23 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 	}
 	
 	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
 		List<ErroResponse> errors = ex.getBindingResult()
-		.getFieldErrors()
-		.stream()
-		.map(x -> new ErroResponse(x.getField(), x.getDefaultMessage()))
-		.collect(Collectors.toList());
+			.getFieldErrors()
+			.stream()
+			.map(x -> new ErroResponse(x.getField(), x.getDefaultMessage()))
+			.collect(Collectors.toList());
 		
 		return ResponseEntity.badRequest().body(errors);
 	}
-	
+
 	@ExceptionHandler(BadCredentialsException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	ErroResponse entityBadCredentialsException(BadCredentialsException ex) {
 		return new ErroResponse("Nome de Usuário e/ou senha inválidos");
 	}
+	
 }
