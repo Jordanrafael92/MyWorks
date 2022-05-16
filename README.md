@@ -28,6 +28,8 @@
 
 <b>5 - A aplicação iniciará automaticamente no navegador, no endereço:</b>
 <p>http://localhost:8081/login</p>
+<p>Usuário: Admin</p>
+<p>Senha: 123456</p>
 
 ## Developer
 Jordan Silva
